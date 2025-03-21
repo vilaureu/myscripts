@@ -4,8 +4,7 @@
   outputs =
     { self, nixpkgs, ... }:
     let
-      versionize = name: "${name}-0.1.0";
-      name = versionize "myscripts";
+      name = "myscripts-0.2.0";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
@@ -18,7 +17,7 @@
           wrap =
             { name, ... }@args:
             (pkgs.writeShellApplication (
-              { text = ''exec ${./bin/${name}} "$@"''; } // args // { name = versionize name; }
+              { text = ''exec ${./bin/${name}} "$@"''; } // args
             )).overrideAttrs
               (oldAttrs: {
                 nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [ pkgs.installShellFiles ];
