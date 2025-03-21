@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Execute a command detached from the shell without printing its output.
+
+exec setsid "$@" >/dev/null 2>&1

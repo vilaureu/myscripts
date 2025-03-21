@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# List the disk usage of entries in a directory sorted by size.
+
+du --all --max-depth 1 --human-readable "$@" | sort --human-numeric-sort

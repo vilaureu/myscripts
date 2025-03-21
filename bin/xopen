@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Open a file using the preferred desktop application.
+
+exec silent xdg-open "$@"

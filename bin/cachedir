@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+import argparse
+from pathlib import Path
+from inspect import cleandoc
+from sys import stderr
+
+CONTENT = cleandoc(
+    """
+    Signature: 8a477f597d28d172789f06886806bc55
+    # This file is a cache directory tag created by cachdir.
+    # For information about cache directory tags, see: https://bford.info/cachedir/
+    """
+)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Create a CACHEDIR.TAG file",
+        epilog="This file marks caching directories to be excluded from, e.g., backups.",
+    )
+    parser.add_argument(
+        "directories",
+        type=Path,
+        default=[Path(".")],
+        nargs="*",
+        help="directories to create a cachedir file in",
+    )
+    args = parser.parse_args()
+
+    error = False
+    for directory in args.directories:
+        path = directory / "CACHEDIR.TAG"
+        try:
+            with open(path, "x") as file:
+                file.write(CONTENT)
+        except Exception as e:
+            print(f"Creating {path} failed with: {e}", file=stderr)
+            error = True
+
+    if error:
+        exit(1)
+
+
+if __name__ == "__main__":
+    main()

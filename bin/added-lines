@@ -1,0 +1,24 @@
+#!/usr/bin/env python3
+
+"""List all lines added in a Git diff together with their location in the target.
+
+This tool is intended for searching through all additions made to a Git project.
+
+For example, you can use the following command to find all TODO statements added to a project:
+$ git diff HEAD | added-lines | grep -i todo
+"""
+
+from unidiff import PatchSet, PatchedFile, Hunk
+from unidiff.patch import Line
+from sys import stdin
+
+patch = PatchSet(stdin)
+
+for file in patch:  # type: PatchedFile
+    filename = file.target_file.removeprefix("b/")
+    for hunk in file:  # type: Hunk
+        for line in hunk.target_lines():  # type: Line
+            if not line.is_added:
+                continue
+            value = line.value.strip()
+            print(f"{filename}:{line.target_line_no}| {value}")
