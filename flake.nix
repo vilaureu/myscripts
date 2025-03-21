@@ -4,6 +4,8 @@
   outputs =
     { self, nixpkgs, ... }:
     let
+      versionize = name: "${name}-0.1.0";
+      name = versionize "myscripts";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
@@ -15,7 +17,9 @@
           # Create a wrapper script with the right PATH and maybe a shell completion.
           wrap =
             { name, ... }@args:
-            (pkgs.writeShellApplication ({ text = ''exec ${./bin/${name}} "$@"''; } // args)).overrideAttrs
+            (pkgs.writeShellApplication (
+              { text = ''exec ${./bin/${name}} "$@"''; } // args // { name = versionize name; }
+            )).overrideAttrs
               (oldAttrs: {
                 nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [ pkgs.installShellFiles ];
                 buildCommand =
@@ -71,11 +75,11 @@
         scripts
         // {
           headless = pkgs.buildEnv {
-            name = "headless";
+            name = "${name}-headless";
             paths = headless;
           };
           default = pkgs.buildEnv {
-            name = "myscripts";
+            name = name;
             paths = headless ++ [
               xopen
               silent
