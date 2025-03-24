@@ -16,9 +16,7 @@
           # Create a wrapper script with the right PATH and maybe a shell completion.
           wrap =
             { name, ... }@args:
-            (pkgs.writeShellApplication (
-              { text = ''exec ${./bin/${name}} "$@"''; } // args
-            )).overrideAttrs
+            (pkgs.writeShellApplication ({ text = ''exec ${./bin/${name}} "$@"''; } // args)).overrideAttrs
               (oldAttrs: {
                 nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [ pkgs.installShellFiles ];
                 buildCommand =
@@ -63,11 +61,20 @@
               name = "cachedir";
               runtimeInputs = [ pkgs.python3 ];
             };
+            anontgz = wrap {
+              name = "anontgz";
+              runtimeInputs = [
+                pkgs.bash
+                pkgs.gnutar
+                pkgs.pigz
+              ];
+            };
           };
           headless = with scripts; [
             duh
             added-lines
             cachedir
+            anontgz
           ];
         in
         with scripts;

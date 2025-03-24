@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+# Create a reproducible/anonymous compressed TAR archive.
+# This avoids the usual user, time, and system information found in a TAR archive and GZIP
+# compression.
+# See: https://www.gnu.org/software/tar/manual/html_node/Reproducibility.html
+
+exec tar --create "$@" \
+	--sort=name --format=posix \
+	--pax-option=exthdr.name=%d/PaxHeaders/%f \
+	--pax-option=delete=atime,delete=ctime \
+	--mtime="1990-01-01 00:00:00" \
+	--numeric-owner --owner=0 --group=0 \
+	--mode=go+u,go-w \
+	--use-compress-program="pigz --no-name"
