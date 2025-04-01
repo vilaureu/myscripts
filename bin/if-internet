@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Run a command only if there is an internet connection (to 1.1.1.1).
+# The command is provided via the program arguments.
+
+set -euo pipefail
+
+if curl 1.1.1.1 >/dev/null 2>&1; then
+	exec "$@"
+else
+	echo >&2 "no internet connection, skipping execution"
+fi

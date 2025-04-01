@@ -69,12 +69,27 @@
                 pkgs.pigz
               ];
             };
+            if-network = wrap {
+              name = "if-network";
+              runtimeInputs = [
+                pkgs.python3
+              ];
+            };
+            if-internet = wrap {
+              name = "if-internet";
+              runtimeInputs = [
+                pkgs.bash
+                pkgs.curl
+              ];
+            };
           };
           headless = with scripts; [
             duh
             added-lines
             cachedir
             anontgz
+            if-network
+            if-internet
           ];
         in
         with scripts;
