@@ -4,7 +4,7 @@
   outputs =
     { self, nixpkgs, ... }:
     let
-      name = "myscripts-0.3.0";
+      name = "myscripts-0.4.0";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
@@ -40,7 +40,8 @@
               '';
             }
           );
-          scripts = rec {
+          fish = nixpkgs.lib.genAttrs [ "cdup" ] packageFish;
+          scripts = fish // rec {
             duh = wrap {
               name = "duh";
               runtimeInputs = [
@@ -104,12 +105,11 @@
             anontgz
             if-network
             if-internet
+            cdup
           ];
-          fish = nixpkgs.lib.genAttrs [ "cdup" ] packageFish;
         in
         with scripts;
         scripts
-        // fish
         // {
           headless = pkgs.buildEnv {
             name = "${name}-headless";
@@ -122,7 +122,6 @@
               silent
             ];
           };
-          fish = fish;
         }
       );
 
