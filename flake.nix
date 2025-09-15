@@ -4,7 +4,7 @@
   outputs =
     { self, nixpkgs, ... }:
     let
-      name = "myscripts-0.2.0";
+      name = "myscripts-0.3.0";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
@@ -19,13 +19,27 @@
             (pkgs.writeShellApplication ({ text = ''exec ${./bin/${name}} "$@"''; } // args)).overrideAttrs
               (oldAttrs: {
                 nativeBuildInputs = (oldAttrs.nativeBuildInputs or [ ]) ++ [ pkgs.installShellFiles ];
-                buildCommand =
-                  oldAttrs.buildCommand
-                  + ''
-                    completion=${./completions}/${name}.fish
-                    if [[ -e "$completion" ]] then installShellCompletion "$completion"; fi
-                  '';
+                buildCommand = oldAttrs.buildCommand + ''
+                  completion=${./completions}/${name}.fish
+                  if [[ -e "$completion" ]] then installShellCompletion "$completion"; fi
+                '';
               });
+          packageFish = (
+            name:
+            pkgs.stdenv.mkDerivation {
+              inherit name;
+              src = ./.;
+              installPhase = ''
+                runHook preInstall
+                (
+                  target="$out/share/fish/vendor_functions.d"
+                  mkdir -p $target
+                  cp "$src"/functions/"$name".fish "$target/"
+                )
+                runHook postInstall
+              '';
+            }
+          );
           scripts = rec {
             duh = wrap {
               name = "duh";
@@ -91,9 +105,11 @@
             if-network
             if-internet
           ];
+          fish = nixpkgs.lib.genAttrs [ "cdup" ] packageFish;
         in
         with scripts;
         scripts
+        // fish
         // {
           headless = pkgs.buildEnv {
             name = "${name}-headless";
@@ -106,6 +122,7 @@
               silent
             ];
           };
+          fish = fish;
         }
       );
 
