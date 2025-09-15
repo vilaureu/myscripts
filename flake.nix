@@ -4,7 +4,7 @@
   outputs =
     { self, nixpkgs, ... }:
     let
-      name = "myscripts-0.4.0";
+      name = "myscripts-0.5.0";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
