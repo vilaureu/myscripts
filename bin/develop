@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# Start a Nix development shell using the specified packages.
+
+set -euo pipefail
+
+# shellcheck disable=SC2016
+exec nix develop --argstr names "$*" --impure --expr '
+  { names }:
+  let
+    nixpkgs = builtins.getFlake "nixpkgs";
+    lib = nixpkgs.lib;
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
+    nameList = lib.splitString " " names;
+    mapper = builtins.map (n: pkgs.${n});
+  in
+  pkgs.mkShell { packages = mapper nameList; }
+' --command "${SHELL:-/bin/sh}"

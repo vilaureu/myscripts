@@ -4,7 +4,7 @@
   outputs =
     { self, nixpkgs, ... }:
     let
-      name = "myscripts-0.5.0";
+      name = "myscripts-0.6.0";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
@@ -97,6 +97,12 @@
                 pkgs.curl
               ];
             };
+            develop = wrap {
+              name = "develop";
+              runtimeInputs = [
+                pkgs.bash
+              ];
+            };
           };
           headless = with scripts; [
             duh
@@ -105,6 +111,7 @@
             anontgz
             if-network
             if-internet
+            develop
             cdup
           ];
         in
