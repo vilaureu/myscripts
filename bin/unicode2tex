@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+
+"""Convert a text with unicode typographic characters into TeX-compatible code."""
+
+import sys
+import re
+
+REPLACEMENTS = {
+    "’": "'",
+    "‑": "-",
+    "–": "--",
+    "—": "---",
+    ".  ": ".\n",
+    r"Figure \ref": r"\Cref",
+    r"figure \ref": r"\cref",
+    r"Figure \ref": r"\Cref",
+    r"figure \ref": r"\cref",
+    " ": r"\,",
+    " ": "~",
+    "“": r"\enquote{",
+    "”": r"}",
+}
+
+text = sys.stdin.read()
+
+for unicode, tex in REPLACEMENTS.items():
+    text = text.replace(unicode, tex)
+
+UNICODE_RE = re.compile("[^\x00-\x7fäüößÄÜÖẞ§]+")
+
+for match in UNICODE_RE.finditer(text):
+    context_start = max(0, match.start() - 10, text[: match.start()].rfind("\n") + 1)
+    context_end = text[match.end() :].find("\n")
+    context_end = len(text) if context_end == -1 else match.end() + context_end
+    context_end = min(len(text), match.end() + 10, context_end)
+    prefix = text[context_start : match.start()]
+    context_start = text[:context_start].rfind("\n") + 1
+    suffix = text[match.end() : context_end]
+    line = 1 + sum(1 for char in text[: match.start()] if char == "\n")
+    print(
+        f'⚠ non-ascii character found on line {line}: "{prefix}>{match.group()}<{suffix}"',
+        file=sys.stderr,
+    )
+
+sys.stdout.write(text)

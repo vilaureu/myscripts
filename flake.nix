@@ -103,6 +103,12 @@
                 pkgs.bash
               ];
             };
+            unicode2tex = wrap {
+              name = "unicode2tex";
+              runtimeInputs = [
+                pkgs.python3
+              ];
+            };
           };
           headless = with scripts; [
             duh
@@ -112,6 +118,7 @@
             if-network
             if-internet
             develop
+            unicode2tex
             cdup
           ];
         in
