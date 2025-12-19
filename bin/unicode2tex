@@ -4,6 +4,7 @@
 
 import sys
 import re
+import argparse
 
 REPLACEMENTS = {
     "’": "'",
@@ -21,25 +22,46 @@ REPLACEMENTS = {
     "”": r"}",
 }
 
-text = sys.stdin.read()
-
-for unicode, tex in REPLACEMENTS.items():
-    text = text.replace(unicode, tex)
-
 UNICODE_RE = re.compile("[^\x00-\x7fäüößÄÜÖẞ§]+")
 
-for match in UNICODE_RE.finditer(text):
-    context_start = max(0, match.start() - 10, text[: match.start()].rfind("\n") + 1)
-    context_end = text[match.end() :].find("\n")
-    context_end = len(text) if context_end == -1 else match.end() + context_end
-    context_end = min(len(text), match.end() + 10, context_end)
-    prefix = text[context_start : match.start()]
-    context_start = text[:context_start].rfind("\n") + 1
-    suffix = text[match.end() : context_end]
-    line = 1 + sum(1 for char in text[: match.start()] if char == "\n")
-    print(
-        f'⚠ non-ascii character found on line {line}: "{prefix}>{match.group()}<{suffix}"',
-        file=sys.stderr,
-    )
 
-sys.stdout.write(text)
+def main():
+    parser = argparse.ArgumentParser(
+        description="Convert a text with unicode typographic characters into TeX-compatible code."
+    )
+    parser.add_argument(
+        "-c",
+        "--check",
+        action="store_true",
+        help="only check for unicode characters but do no conversion",
+    )
+    args = parser.parse_args()
+
+    text = sys.stdin.read()
+
+    if not args.check is True:
+        for unicode, tex in REPLACEMENTS.items():
+            text = text.replace(unicode, tex)
+
+    for match in UNICODE_RE.finditer(text):
+        context_start = max(
+            0, match.start() - 10, text[: match.start()].rfind("\n") + 1
+        )
+        context_end = text[match.end() :].find("\n")
+        context_end = len(text) if context_end == -1 else match.end() + context_end
+        context_end = min(len(text), match.end() + 10, context_end)
+        prefix = text[context_start : match.start()]
+        context_start = text[:context_start].rfind("\n") + 1
+        suffix = text[match.end() : context_end]
+        line = 1 + sum(1 for char in text[: match.start()] if char == "\n")
+        print(
+            f'⚠ non-ascii character found on line {line}: "{prefix}>{match.group()}<{suffix}"',
+            file=sys.stderr,
+        )
+
+    if not args.check is True:
+        sys.stdout.write(text)
+
+
+if __name__ == "__main__":
+    main()
