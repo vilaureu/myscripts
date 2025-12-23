@@ -4,7 +4,7 @@
   outputs =
     { self, nixpkgs, ... }:
     let
-      name = "myscripts-0.6.0";
+      name = "myscripts-0.7.0";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
@@ -34,7 +34,7 @@
                 (
                   target="$out/share/fish/vendor_functions.d"
                   mkdir -p $target
-                  cp "$src"/functions/"$name".fish "$target/"
+                  cp "$src"/functions/"$name".funicode2texish "$target/"
                 )
                 runHook postInstall
               '';
@@ -109,6 +109,12 @@
                 pkgs.python3
               ];
             };
+            j = wrap {
+              name = "j";
+              runtimeInputs = [
+                pkgs.bash
+              ];
+            };
           };
           headless = with scripts; [
             duh
@@ -119,6 +125,7 @@
             if-internet
             develop
             unicode2tex
+            j
             cdup
           ];
         in
