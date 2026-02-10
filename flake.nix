@@ -34,7 +34,7 @@
                 (
                   target="$out/share/fish/vendor_functions.d"
                   mkdir -p $target
-                  cp "$src"/functions/"$name".funicode2texish "$target/"
+                  cp "$src"/functions/"$name".fish "$target/"
                 )
                 runHook postInstall
               '';
@@ -118,7 +118,7 @@
             ts = wrap {
               name = "ts";
               runtimeInputs = [
-                pkgs.ts
+                pkgs.bash
               ];
             };
           };
