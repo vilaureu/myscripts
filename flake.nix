@@ -4,7 +4,7 @@
   outputs =
     { self, nixpkgs, ... }:
     let
-      name = "myscripts-0.7.0";
+      name = "myscripts-0.8.0";
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
       forAllPkgs = f: forAllSystems (system: f nixpkgs.legacyPackages.${system});
@@ -115,6 +115,12 @@
                 pkgs.bash
               ];
             };
+            ts = wrap {
+              name = "ts";
+              runtimeInputs = [
+                pkgs.ts
+              ];
+            };
           };
           headless = with scripts; [
             duh
@@ -126,6 +132,7 @@
             develop
             unicode2tex
             j
+            ts
             cdup
           ];
         in

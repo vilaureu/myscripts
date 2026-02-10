@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# This script creates a new, named tmux session in the current or given directory.
+
+set -euo pipefail
+
+path=${1-$PWD}
+path=$(realpath "$path")
+name=${path/#"$HOME"/"~"}
+if [[ "$name" != "~" && "$name" != "/" ]]; then
+	name="$(basename "$name") $(dirname "$name")"
+fi
+if [[ "$name" == "~" ]]; then
+	name=HOME
+fi
+name=${name//./_}
+name=${name//:/_}
+name=${name//%/_}
+name=${name//\$/_}
+
+if [[ -z "${TMUX-}" ]]; then
+	tmux new-session -A -s"$name" -c"$path"
+else
+	tmux new-session -d -s"$name" -c"$path" || true
+	tmux switch-client -t"$name"
+fi
