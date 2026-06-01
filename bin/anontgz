@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Create a reproducible/anonymous compressed TAR archive.
 # This avoids the usual user, time, and system information found in a TAR archive and GZIP
