@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# Simple wrapper around hb-raster and ImageMagick to render emojis as PNG images.
+#
+# Usage:
+#   emoji OUTPUT_FILE EMOJI_TEXT
+# where:
+#   OUTPUT_FILE : path to output PNG file
+#   EMOJI_TEXT  : emoji text to render (e.g. "😀", "❤️")
+
+set -euo pipefail
+
+font="$(fc-match -f '%{file}' 'Noto Color Emoji' | head -n1)"
+hb-raster --background=none --margin=0 --font-size=1000 --output-file="$1" --text="$2" "$font"
+magick "$1" -trim "$1"
