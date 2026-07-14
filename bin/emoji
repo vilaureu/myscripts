@@ -10,6 +10,6 @@
 
 set -euo pipefail
 
-font="$(fc-match -f '%{file}' 'Noto Color Emoji' | head -n1)"
-hb-raster --background=none --margin=0 --font-size=1000 --output-file="$1" --text="$2" "$font"
+font=${EMOJI_FONT_FILE:-~/.local/share/Noto-COLRv1.ttf}
+hb-raster --background=00000000 --margin=0 --font-size=1000 --output-file="$1" -- "$font" "$2"
 magick "$1" -trim "$1"
