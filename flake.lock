@@ -2,21 +2,33 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1757873102,
-        "narHash": "sha256-kYhNxLlYyJcUouNRazBufVfBInMWMyF+44xG/xar2yE=",
-        "owner": "NixOS",
-        "repo": "nixpkgs",
-        "rev": "88cef159e47c0dc56f151593e044453a39a6e547",
-        "type": "github"
+        "lastModified": 1783850910,
+        "narHash": "sha256-JY8V3NtJNyNHFXZx8GFSSZ7LPoYeXIdQt4R2bufnfOI=",
+        "rev": "2db6e73b5d66ffd9d4c203f065d676f9a1eabbd2",
+        "type": "tarball",
+        "url": "https://releases.nixos.org/nixpkgs/nixpkgs-26.11pre1033201.2db6e73b5d66/nixexprs.tar.xz"
       },
       "original": {
         "id": "nixpkgs",
         "type": "indirect"
       }
     },
+    "noto-color-emoji": {
+      "flake": false,
+      "locked": {
+        "narHash": "sha256-2V2p0j7I1udL4MVxuq55BOANqG1lXsO39KWub0VHvog=",
+        "type": "file",
+        "url": "https://github.com/googlefonts/noto-emoji/raw/refs/tags/v2.051/fonts/Noto-COLRv1.ttf"
+      },
+      "original": {
+        "type": "file",
+        "url": "https://github.com/googlefonts/noto-emoji/raw/refs/tags/v2.051/fonts/Noto-COLRv1.ttf"
+      }
+    },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "noto-color-emoji": "noto-color-emoji"
       }
     }
   },

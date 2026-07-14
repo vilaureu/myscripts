@@ -1,8 +1,20 @@
 {
   description = "Some of my personal scripts that I use quite frequently";
 
+  inputs = {
+    noto-color-emoji = {
+      url = "https://github.com/googlefonts/noto-emoji/raw/refs/tags/v2.051/fonts/Noto-COLRv1.ttf";
+      flake = false;
+    };
+  };
+
   outputs =
-    { self, nixpkgs, ... }:
+    {
+      self,
+      nixpkgs,
+      noto-color-emoji,
+      ...
+    }:
     let
       name = "myscripts-0.8.0";
       supportedSystems = [ "x86_64-linux" ];
@@ -121,6 +133,22 @@
                 pkgs.bash
               ];
             };
+            emoji =
+              let
+                harfbuzz = pkgs.harfbuzz.override { withRaster = true; };
+              in
+              wrap {
+                name = "emoji";
+                runtimeInputs = [
+                  pkgs.bash
+                  pkgs.fontconfig
+                  pkgs.imagemagick
+                  harfbuzz.dev
+                ];
+                runtimeEnv = {
+                  EMOJI_FONT_FILE = noto-color-emoji;
+                };
+              };
           };
           headless = with scripts; [
             duh
@@ -134,6 +162,7 @@
             j
             ts
             cdup
+            emoji
           ];
         in
         with scripts;
